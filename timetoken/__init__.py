@@ -74,19 +74,19 @@ class Token(object):
         """
         try:
             token = str(token)
-        except: raise ValueError('Token contains non-ASCII characters.')
+        except: raise ParseTokenException('Token contains non-ASCII characters.')
 
         # Split data and signature
         parts_s = token.split('.')
         if len(parts_s) < 2:
-            raise ValueError('Unrecognized token structure.')
+            raise ParseTokenException('Unrecognized token structure.')
         data = '.'.join(parts_s[:-1])
         self.signature = parts_s[-1]
 
         # Split custom data and timestamp
         parts_d = data.split('_')
         if len(parts_d) < 2:
-            raise ValueError('Unrecognized token structure.')
+            raise ParseTokenException('Unrecognized token structure.')
         self.data = parts_d[:-1]
         self.timestamp = float(parts_d[-1])
 
@@ -172,6 +172,9 @@ class InvalidTokenException(TokenException):
     pass
 
 class TokenIntegrityException(TokenException):
+    pass
+
+class ParseTokenException(TokenException):
     pass
 
 # Tests
