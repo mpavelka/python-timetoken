@@ -173,3 +173,84 @@ class InvalidTokenException(TokenException):
 
 class TokenIntegrityException(TokenException):
     pass
+
+# Tests
+import unittest
+
+class TestToken(unittest.TestCase):
+
+    def setUp(self):
+        self.token = Token()
+
+    def test_append(self):
+        self.assertEquals(Token.append('test', 'test2'), 'test_test2')
+        self.assertEquals(Token.append('', 'test2'), 'test2')
+
+
+    def test_export(self):
+        self.token.parse('test_1487063344.58.invalidsignature')
+        token = self.token.export()
+        self.assertEquals(token, 'test_1487063344.58.invalidsignature')
+
+    def test_gen_signature(self):
+        self.assertIsInstance(Token.gen_signature(
+            data=['test'],
+            timestamp=1487063344.58), str)
+
+    def test_get_data(self):
+        pass
+
+    def test_get_data_at_index(self):
+        self.token.data = ['test', 'test2']
+        self.assertEquals(self.token.get_data_at_index(1), 'test2')
+
+    def test_parse(self):
+        self.token.parse('test_1487063344.58.invalidsignature')
+        self.assertEquals(self.token.data, ['test'])
+        self.assertEquals(self.token.timestamp, 1487063344.58)
+        self.assertEquals(self.token.signature, 'invalidsignature')
+
+    def test_push(self):
+        self.token.push('test')
+        self.token.push('test2')
+        self.assertEquals(self.token.data, ['test', 'test2'])
+
+    def test_reset(self):
+        pass
+
+    def test_sign(self):
+        self.token.sign()
+        self.assertIsNotNone(self.token.signature)
+
+    def test_set_timestamp(self):
+        self.token.set_timestamp()
+        self.assertIsNotNone(self.token.timestamp)
+
+    def test_timestamp_to_str(self):
+        ret = Token.timestamp_to_str(123.333324242)
+        self.assertEquals(ret, '123.33')
+
+    def test_tokenize_data(self):
+        ret = Token.tokenize_data(['test', 'test2'])
+        self.assertEquals(ret, 'test_test2')
+
+    def test_validate(self):
+        # Test validity failure
+        self.token.set_timestamp(time.time()-2000.0)
+        self.token.sign()
+        with self.assertRaises(InvalidTokenException):
+            self.token.validate()
+
+        # Test integrity failure
+        self.token.set_timestamp()
+        self.token.signature = 'invalidsignature'
+        with self.assertRaises(TokenIntegrityException):
+            self.token.validate()
+
+        # Test valid certificate
+        self.token.sign()
+        self.token.validate()
+
+
+if __name__ == '__main__':
+    unittest.main()
