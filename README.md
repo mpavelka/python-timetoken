@@ -1,2 +1,2 @@
-# python-token
-Universal Token API for generating and validating access tokens.
+# Time Token
+Universal Token API for generating and validating time limited access tokens.
