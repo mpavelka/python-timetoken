@@ -165,8 +165,11 @@ class Token(object):
 
 # Exceptions
 
-class InvalidTokenException(Exception):
+class TokenException(Exception):
     pass
 
-class TokenIntegrityException(Exception):
+class InvalidTokenException(TokenException):
+    pass
+
+class TokenIntegrityException(TokenException):
     pass
