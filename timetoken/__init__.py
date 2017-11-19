@@ -46,7 +46,7 @@ class Token(object):
         token = ''
         token = Token.append(token, Token.tokenize_data(data))
         token = Token.append(token, Token.timestamp_to_str(timestamp))
-        return hashlib.sha224(secret+token).hexdigest()
+        return hashlib.sha224((secret+token).encode('utf-8')).hexdigest()
 
 
 
