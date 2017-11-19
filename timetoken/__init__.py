@@ -213,6 +213,9 @@ class TestToken(unittest.TestCase):
         self.assertEqual(self.token.timestamp, 1487063344.58)
         self.assertEqual(self.token.signature, 'invalidsignature')
 
+        with self.assertRaises(ParseTokenException):
+            self.token.parse('test_1487063344_invalidsignature')
+
     def test_push(self):
         self.token.push('test')
         self.token.push('test2')
