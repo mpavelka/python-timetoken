@@ -155,7 +155,7 @@ class Token(object):
         """
 
         # Validity
-        if self.timestamp + max_age < time.time():
+        if max_age != -1 and self.timestamp + max_age < time.time():
             raise InvalidTokenException()
         # Integrity
         if self.signature != Token.gen_signature(self.data, self.timestamp, self.secret):
@@ -246,6 +246,9 @@ class TestToken(unittest.TestCase):
         self.token.sign()
         with self.assertRaises(InvalidTokenException):
             self.token.validate()
+
+        # Must not raise error if max_age == -1
+        self.token.validate(max_age=-1.0)
 
         # Test integrity failure
         self.token.set_timestamp()
