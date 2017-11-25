@@ -120,9 +120,9 @@ class Token(object):
 
     def set_timestamp(self, timestamp=None):
         """ Timestamp setter
-            :param float timestamp: Optional timestamp (default time.time())
+            :param float timestamp: Optional timestamp (default time.mktime(time.gmtime()))
         """
-        self.timestamp = timestamp if timestamp is not None else time.time()
+        self.timestamp = timestamp if timestamp is not None else time.mktime(time.gmtime())
 
 
     @staticmethod
@@ -155,7 +155,7 @@ class Token(object):
         """
 
         # Validity
-        if max_age != -1 and self.timestamp + max_age < time.time():
+        if max_age != -1 and self.timestamp + max_age < time.mktime(time.gmtime()):
             raise InvalidTokenException()
         # Integrity
         if self.signature != Token.gen_signature(self.data, self.timestamp, self.secret):
@@ -242,7 +242,7 @@ class TestToken(unittest.TestCase):
 
     def test_validate(self):
         # Test validity failure
-        self.token.set_timestamp(time.time()-2000.0)
+        self.token.set_timestamp(time.mktime(time.gmtime())-2000.0)
         self.token.sign()
         with self.assertRaises(InvalidTokenException):
             self.token.validate()
