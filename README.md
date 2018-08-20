@@ -1,5 +1,13 @@
-# TimeToken
-TimeToken provides a simple API for creating and validating signed and time limited tokens.
+TimeToken (Python 3)
+===
+
+TimeToken for **Python 3.x** provides a simple API for creating and validating signed and time limited tokens.
+
+## Install with pip
+
+```
+pip install -e git+https://github.com/mpavelka/python-timetoken#egg=timetoken
+```
 
 ## Usage
 
