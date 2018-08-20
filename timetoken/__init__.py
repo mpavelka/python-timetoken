@@ -1,1 +1,1 @@
-from .timetoken import TimeToken, TokenException, TokenExpiredException, InvalidSignatureException, ParseTokenException
+from .timetoken import TimeToken, TimeTokenException, TimeTokenExpired, InvalidTimeTokenSignature, TimeTokenParseError

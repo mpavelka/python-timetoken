@@ -43,7 +43,7 @@ class TimeToken(object):
 		""" Parses a token
 			:param string value: Maximum token age in seconds (default: -1 ... token age will not be evaluated)
 			:param bool raises: Whether or not to raise an excetpion on parse error (otherwise boolean is returned)
-			:throws ParseTokenException: if value can't be parsed
+			:throws TimeTokenParseError: if value can't be parsed
 		"""
 		try:
 			parts = str(value).split("_")
@@ -51,7 +51,7 @@ class TimeToken(object):
 			self._uuid = uuid.UUID(hex=parts[1])
 			self._signature = parts[2]
 		except (IndexError, ValueError, TypeError) as e:
-			raise ParseTokenException("Invalid token format.")
+			raise TimeTokenParseError("Invalid token format.")
 
 
 	def validate(self, max_seconds=-1, raises=False):
@@ -66,13 +66,13 @@ class TimeToken(object):
 		now = datetime.datetime.utcnow()
 		if max_seconds != -1 and (now - self._datetime).total_seconds() > max_seconds:
 			if raises:
-				raise TokenExpiredException()
+				raise TimeTokenExpired()
 			else: return False
 
 		# Integrity
 		if self._signature != self.gen_signature():
 			if raises:
-				raise InvalidSignatureException()
+				raise InvalidTimeTokenSignature()
 			else: return False
 
 		return True
@@ -97,16 +97,16 @@ class TimeToken(object):
 
 # Exceptions
 
-class TokenException(Exception):
+class TimeTokenException(Exception):
 	pass
 
-class TokenExpiredException(TokenException):
+class TimeTokenExpired(TimeTokenException):
 	pass
 
-class InvalidSignatureException(TokenException):
+class InvalidTimeTokenSignature(TimeTokenException):
 	pass
 
-class ParseTokenException(TokenException):
+class TimeTokenParseError(TimeTokenException):
 	pass
 
 
@@ -115,12 +115,14 @@ if __name__ == '__main__':
 	TestCase = unittest.TestCase()
 	valid_token = TimeToken(secret="SECRET")
 
+	print(valid_token)
+
 	# Test parser
-	with unittest.TestCase().assertRaises(ParseTokenException):
+	with unittest.TestCase().assertRaises(TimeTokenParseError):
 		1<2
 		TimeToken("1234321_00000000_11111111", secret="TERCES")
 	print("parser test 1 - ok")
-	with unittest.TestCase().assertRaises(ParseTokenException):
+	with unittest.TestCase().assertRaises(TimeTokenParseError):
 		TimeToken("1234321_0000000011111111", secret="TERCES")
 	print("parser test 2 - ok")
 
@@ -128,12 +130,12 @@ if __name__ == '__main__':
 	assert valid_token.validate() == True
 	print("validity check test 1 - ok")
 
-	with unittest.TestCase().assertRaises(InvalidSignatureException):
+	with unittest.TestCase().assertRaises(InvalidTimeTokenSignature):
 		invalid_token = TimeToken(valid_token, secret="TERCES")
 		invalid_token.validate(raises=True)
 	print("validity check test 2 - ok")
 
-	with unittest.TestCase().assertRaises(TokenExpiredException):
+	with unittest.TestCase().assertRaises(TimeTokenExpired):
 		print("Waiting for token to expire...")
 		time.sleep(2)
 		valid_token.validate(max_seconds=1, raises=True)
