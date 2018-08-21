@@ -21,7 +21,10 @@ token = TimeToken(secret="[SECRET_STRING]")
 Parse previously created token `_token` (it can be an instance of TimeToken or a string):
 
 ```
-token = TimeToken(_token, secret="[SECRET_STRING]")
+> _token = TimeToken(secret="[SECRET_STRING]").to_string()
+> token = TimeToken(_token, secret="[SECRET_STRING]")
+> token.validate()
+True
 ```
 
 Validate token signature:
@@ -36,8 +39,10 @@ False
 Validate that token is not older than `max_seconds` and that signature is valid:
 
 ```
-> token = TimeToken(_token, secret="[DIFFERENT_SECRET_STRING]")
-> token.validate(max_seconds=5)
+> _token = TimeToken(secret="[SECRET_STRING]").to_string()
+> token = TimeToken(_token, secret="[SECRET_STRING]")
+> time.sleep(2)
+> token.validate(max_seconds=1)
 False
 ```
 
