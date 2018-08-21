@@ -27,6 +27,7 @@ token = TimeToken(_token, secret="[SECRET_STRING]")
 Validate token signature:
 
 ```
+> _token = TimeToken(secret="[SECRET_STRING]").to_string()
 > token = TimeToken(_token, secret="[DIFFERENT_SECRET_STRING]")
 > token.validate()
 False
