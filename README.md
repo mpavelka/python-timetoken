@@ -51,23 +51,23 @@ False
 Generic TimeToken exception:
 
 ```
-TimeTokenException
+TimeTokenException(Exception)
 ```
 
-Exception raised when `validate(max_seconds=5)` fails due to token expiry: 
+Exception raised when `validate(max_seconds=5, raises=True)` fails due to token expiry: 
 
 ```
-TimeTokenExpired
+TimeTokenExpired(TimeTokenException)
 ```
 
-Exception raised when `validate()` fails due to invalid token signature:
+Exception raised when `validate(raises=True)` fails due to invalid token signature:
 
 ```
-InvalidTimeTokenSignature
+InvalidTimeTokenSignature(TimeTokenException)
 ```
 
-Exception raised when initial value can't be parsed:
+Exception raised when initial value can't be parsed (`Token("invalid_token_value")`):
 
 ```
-TimeTokenParseError
+TimeTokenParseError(TimeTokenException)
 ```
